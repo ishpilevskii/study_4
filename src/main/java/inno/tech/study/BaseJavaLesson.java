@@ -47,7 +47,7 @@ public class BaseJavaLesson {
                 finalString += i;
                 finalString += " ";
             } else {
-                finalString += "Let's go!";
+                finalString += "Поехали!";
             }
 
         }
@@ -64,7 +64,7 @@ public class BaseJavaLesson {
 
     public static boolean hasBug(String[] messages) {
         for (String message: messages) {
-            if (message == "Bug") {
+            if (message.equals("Bug")) {
                 return true;
             }
         }
@@ -108,13 +108,12 @@ public class BaseJavaLesson {
         return result;
     }
 
-    public static int calcAverage(List<Integer> list) {
-        int len_list = list.size();
-        int sum_list = 0;
+    public static double calcAverage(List<Integer> list) {
+        int sum = 0;
         for (Integer num : list) {
-            sum_list += num;
+            sum += num;
         }
-        return sum_list / len_list;
+        return (double) sum / list.size();
     }
 
     public static List<String> removeSpecificName(List<String> list, String nameToRemove) {
