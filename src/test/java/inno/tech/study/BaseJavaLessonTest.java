@@ -3,6 +3,7 @@ package inno.tech.study;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,6 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+@Tag("base-java")
 class BaseJavaLessonTest {
 
     private static final Random RANDOM = new Random();
@@ -32,36 +36,27 @@ class BaseJavaLessonTest {
         System.out.println("========================");
     }
 
-    private static void printResult(boolean passed) {
-        if (passed) {
-            System.out.println("TEST PASSED");
-        } else {
-            System.out.println("TEST FAILED");
-        }
-    }
-
     @Test
     void isEvenTest() {
         int n = RANDOM.nextInt(1, 101);
-        boolean expected = n % 2 == 0;
         boolean actual = BaseJavaLesson.isEven(n);
-        printResult(actual == expected);
+        assertThat(actual).as(n + " is not even").isTrue();
     }
 
+    // тесты специяально падают
     @Test
     void isPositiveTest() {
         int n = RANDOM.nextInt(-100, 101);
-        boolean expected = n >= 0;
         boolean actual = BaseJavaLesson.isPositive(n);
-        printResult(actual == expected);
+        assertThat(actual).as(n + " not positive").isTrue();
     }
 
+    // тесты специяально падают
     @RepeatedTest(20)
     void checkAccessTest() {
         int age = RANDOM.nextInt(0, 100);
-        String expected = age > 18 ? "Allowed" : "Denied";
         String actual = BaseJavaLesson.checkAccess(age);
-        printResult(actual.equals(expected));
+        assertThat(actual).as("Age " + age + " is Denied").isEqualTo("Allowed");
     }
 
     @ParameterizedTest
@@ -69,7 +64,7 @@ class BaseJavaLessonTest {
     void sumToNTest(int n) {
         int expected = n * (n + 1) / 2;
         int actual = BaseJavaLesson.sumToN(n);
-        printResult(actual == expected);
+        assertThat(actual).as(actual + "not sum numbers" + n).isEqualTo(expected);
     }
 
     static List<Arguments> bugMessages() {
@@ -79,11 +74,12 @@ class BaseJavaLessonTest {
         );
     }
 
+    // тесты специяально падают
     @ParameterizedTest
     @MethodSource("bugMessages")
-    void hasBugTest(String[] messages, boolean expected) {
+    void hasBugTest(String[] messages) {
         boolean actual = BaseJavaLesson.hasBug(messages);
-        printResult(actual == expected);
+        assertThat(actual).as("In " + Arrays.toString(messages) + " not word Bug").isTrue();
     }
 
     static List<Arguments> reverseArrays() {
@@ -98,19 +94,19 @@ class BaseJavaLessonTest {
     @MethodSource("reverseArrays")
     void reverseTest(String[] input, String[] expected) {
         String[] actual = BaseJavaLesson.reverse(input);
-        printResult(Arrays.equals(actual, expected));
+        assertThat(actual).as("Array " + Arrays.toString(actual) + " is mot reverse").isEqualTo(expected);
     }
 
     @ParameterizedTest
     @CsvSource(quoteCharacter = '"', value = {
-            "0, Let's go!",
-            "1, 1 Let's go!",
-            "3, 3 2 1 Let's go!",
-            "5, 5 4 3 2 1 Let's go!"
+            "0, Поехали!",
+            "1, 1 Поехали!",
+            "3, 3 2 1 Поехали!",
+            "5, 5 4 3 2 1 Поехали!"
     })
     void blastOffTest(int start, String expected) {
         String actual = BaseJavaLesson.blastOff(start);
-        printResult(actual.equals(expected));
+        assertThat(actual).as("String " + actual + " not equal to expected " + expected).isEqualTo(expected);
     }
 
     @ParameterizedTest
@@ -125,7 +121,7 @@ class BaseJavaLessonTest {
     })
     void getGradeTest(int score, String expected) {
         String actual = BaseJavaLesson.getGrade(score);
-        printResult(actual.equals(expected));
+        assertThat(actual).as("Number " + score + " must to be " + expected + " not " + actual).isEqualTo(expected);
     }
 
     enum MaxCase {
@@ -147,7 +143,7 @@ class BaseJavaLessonTest {
     @EnumSource(MaxCase.class)
     void findMaxTest(MaxCase testCase) {
         int actual = BaseJavaLesson.findMax(testCase.arr);
-        printResult(actual == testCase.expected);
+        assertThat(actual).as("Number " + actual + " is not max").isEqualTo(testCase.expected);
     }
 
     static List<Arguments> averageLists() {
@@ -155,22 +151,22 @@ class BaseJavaLessonTest {
                 Arguments.of(List.of(1, 2, 3), 2),
                 Arguments.of(List.of(10, 20, 30, 40), 25),
                 Arguments.of(List.of(5), 5),
-                Arguments.of(List.of(1, 2), 1)
+                Arguments.of(List.of(1, 2), 1.5)
         );
     }
 
     @ParameterizedTest
     @MethodSource("averageLists")
-    void calcAverageTest(List<Integer> list, int expected) {
-        int actual = BaseJavaLesson.calcAverage(list);
-        printResult(actual == expected);
+    void calcAverageTest(List<Integer> list, double expected) {
+        double actual = BaseJavaLesson.calcAverage(list);
+        assertThat(actual).as("Number " + actual + " is not average").isEqualTo(expected);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/get_even_in_range.csv", numLinesToSkip = 1)
     void getEvenInRangeTest(int start, int end, String expected) {
         String actual = BaseJavaLesson.getEvenInRange(start, end);
-        printResult(actual.equals(expected));
+        assertThat(actual).as(actual + " is not even in range " + start + " to " + end ).isEqualTo(expected);
     }
 
     static List<Arguments> namesToRemove() {
@@ -186,6 +182,6 @@ class BaseJavaLessonTest {
     @MethodSource("namesToRemove")
     void removeSpecificNameTest(List<String> list, String nameToRemove, List<String> expected) {
         List<String> actual = BaseJavaLesson.removeSpecificName(list, nameToRemove);
-        printResult(actual.equals(expected));
+        assertThat(actual).as("List " + list + " without " + nameToRemove + " not equal " + actual).isEqualTo(expected);
     }
 }

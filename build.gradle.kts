@@ -13,16 +13,24 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:6.1.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.assertj:assertj-core:3.27.7")
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 
-tasks.register("runAllTests") {
+tasks.register<Test>("runAllTests") {
     group = "verification"
-    description = "Запускает все тесты в проекте."
-    dependsOn(tasks.test)
+    description = "Запускает автотесты с фильтрацией по тегу base-java и пакету inno.tech.study."
+    useJUnitPlatform {
+        includeTags("base-java")
+    }
+    filter {
+        includeTestsMatching("inno.tech.study.*")
+    }
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
 }
 
 tasks.register("testRunIsOver") {
