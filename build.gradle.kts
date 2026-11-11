@@ -14,6 +14,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.assertj:assertj-core:3.27.7")
+    implementation("io.rest-assured:rest-assured:6.2.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.19.2")
 }
 
 tasks.test {
@@ -39,5 +41,19 @@ tasks.register("testRunIsOver") {
     dependsOn("runAllTests")
     doLast {
         println("Test run is over")
+    }
+}
+
+tasks.register<Test>("runApiTests") {
+    group = "verification"
+    description = "Запускает все API-тесты (тег api)."
+    useJUnitPlatform {
+        includeTags("api")
+    }
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
     }
 }
